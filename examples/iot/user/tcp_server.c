@@ -33,86 +33,88 @@
          os_printf(fmt,##__VA_ARGS__);\
      }while(0)
 
-
- #define ERR_PRINT(fmt,...) do{\
+#define ERR_PRINT(fmt,...) do{\
          os_printf("[Err] Fun:%s Line:%d ",__FUNCTION__,__LINE__);\
          os_printf(fmt,##__VA_ARGS__);\
      }while(0)
- #define DBG_LINES(v) os_printf("------------------%s---------------\n",v)
+
+#define DBG_LINES(v) os_printf("------------------%s---------------\n",v)
 
 
 void TcpServerClientConnect(void*arg)
 {
-    struct espconn* tcp_server_local=arg;
+	struct espconn* tcp_server_local = arg;
 #if defined(TCP_SERVER_KEEP_ALIVE_ENABLE)
-	espconn_set_opt(tcp_server_local,BIT(3));//enable keep alive ,this api must call in connect callback
+	espconn_set_opt(tcp_server_local, BIT(3)); //enable keep alive ,this api must call in connect callback
 
-	uint32 keep_alvie=0;
-	keep_alvie=TCP_SERVER_KEEP_ALIVE_IDLE_S;
-	espconn_set_keepalive(tcp_server_local,ESPCONN_KEEPIDLE,&keep_alvie);
-	keep_alvie=TCP_SERVER_RETRY_INTVL_S;
-	espconn_set_keepalive(tcp_server_local,ESPCONN_KEEPINTVL,&keep_alvie);
-	keep_alvie=keep_alvie=TCP_SERVER_RETRY_INTVL_S;
-	espconn_set_keepalive(tcp_server_local,ESPCONN_KEEPCNT,&keep_alvie);
+	uint32 keep_alvie = 0;
+	keep_alvie = TCP_SERVER_KEEP_ALIVE_IDLE_S;
+	espconn_set_keepalive(tcp_server_local, ESPCONN_KEEPIDLE, &keep_alvie);
+	keep_alvie = TCP_SERVER_RETRY_INTVL_S;
+	espconn_set_keepalive(tcp_server_local, ESPCONN_KEEPINTVL, &keep_alvie);
+	keep_alvie = keep_alvie = TCP_SERVER_RETRY_INTVL_S;
+	espconn_set_keepalive(tcp_server_local, ESPCONN_KEEPCNT, &keep_alvie);
 	DBG_PRINT("keep alive enable\n");
 #endif
 	DBG_LINES("TCP server CONNECT");
-	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d",tcp_server_local->proto.tcp->remote_ip[0],
-		                                          tcp_server_local->proto.tcp->remote_ip[1],
-		                                          tcp_server_local->proto.tcp->remote_ip[2],
-		                                          tcp_server_local->proto.tcp->remote_ip[3],
-		                                          tcp_server_local->proto.tcp->remote_port
-		                                          );
-	espconn_send(tcp_server_local,TCP_SERVER_GREETING,strlen(TCP_SERVER_GREETING));
+	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d",
+			tcp_server_local->proto.tcp->remote_ip[0],
+			tcp_server_local->proto.tcp->remote_ip[1],
+			tcp_server_local->proto.tcp->remote_ip[2],
+			tcp_server_local->proto.tcp->remote_ip[3],
+			tcp_server_local->proto.tcp->remote_port);
+	espconn_send(tcp_server_local, TCP_SERVER_GREETING,
+			strlen(TCP_SERVER_GREETING));
 }
 void TcpServerClientDisConnect(void* arg)
 {
-    struct espconn* tcp_server_local=arg;
+	struct espconn* tcp_server_local = arg;
 	DBG_LINES("TCP server DISCONNECT");
-	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d\n",tcp_server_local->proto.tcp->remote_ip[0],
-		                                          tcp_server_local->proto.tcp->remote_ip[1],
-		                                          tcp_server_local->proto.tcp->remote_ip[2],
-		                                          tcp_server_local->proto.tcp->remote_ip[3],
-		                                          tcp_server_local->proto.tcp->remote_port
-		                                          );
+	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d\n",
+			tcp_server_local->proto.tcp->remote_ip[0],
+			tcp_server_local->proto.tcp->remote_ip[1],
+			tcp_server_local->proto.tcp->remote_ip[2],
+			tcp_server_local->proto.tcp->remote_ip[3],
+			tcp_server_local->proto.tcp->remote_port);
 }
 
 void TcpServerClienSendCb(void* arg)
 {
-    struct espconn* tcp_server_local=arg;
+	struct espconn* tcp_server_local = arg;
 	DBG_LINES("TCP server SendCb");
-	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d\n",tcp_server_local->proto.tcp->remote_ip[0],
-		                                          tcp_server_local->proto.tcp->remote_ip[1],
-		                                          tcp_server_local->proto.tcp->remote_ip[2],
-		                                          tcp_server_local->proto.tcp->remote_ip[3],
-		                                          tcp_server_local->proto.tcp->remote_port
-		                                          );
+	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d\n",
+			tcp_server_local->proto.tcp->remote_ip[0],
+			tcp_server_local->proto.tcp->remote_ip[1],
+			tcp_server_local->proto.tcp->remote_ip[2],
+			tcp_server_local->proto.tcp->remote_ip[3],
+			tcp_server_local->proto.tcp->remote_port);
 }
 
 
 
 void TcpServerRecvCb(void *arg, char *pdata, unsigned short len)
 {
-   struct espconn* tcp_server_local=arg;
-   DBG_PRINT("Recv tcp client ip:%d.%d.%d.%d port:%d len:%d\n",tcp_server_local->proto.tcp->remote_ip[0],
-		                                          tcp_server_local->proto.tcp->remote_ip[1],
-		                                          tcp_server_local->proto.tcp->remote_ip[2],
-		                                          tcp_server_local->proto.tcp->remote_ip[3],
-		                                          tcp_server_local->proto.tcp->remote_port,
-		                                          len);
-   espconn_send(tcp_server_local,pdata,len);
+	struct espconn* tcp_server_local = arg;
+	DBG_PRINT("Recv tcp client ip:%d.%d.%d.%d port:%d len:%d\n",
+			tcp_server_local->proto.tcp->remote_ip[0],
+			tcp_server_local->proto.tcp->remote_ip[1],
+			tcp_server_local->proto.tcp->remote_ip[2],
+			tcp_server_local->proto.tcp->remote_ip[3],
+			tcp_server_local->proto.tcp->remote_port, len);
+	espconn_send(tcp_server_local, pdata, len);
 }
 void TcpServerReconnectCb(void *arg, sint8 err)
 {
-    struct espconn* tcp_server_local=arg;
+	struct espconn* tcp_server_local = arg;
 	DBG_LINES("TCP server RECONNECT");
-	DBG_PRINT("status:%d\n",err);
-	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d\n",tcp_server_local->proto.tcp->remote_ip[0],
-		                                          tcp_server_local->proto.tcp->remote_ip[1],
-		                                          tcp_server_local->proto.tcp->remote_ip[2],
-		                                          tcp_server_local->proto.tcp->remote_ip[3],
-		                                          tcp_server_local->proto.tcp->remote_port\
-		                                          );
+	DBG_PRINT("status:%d\n", err);
+	DBG_PRINT("tcp client ip:%d.%d.%d.%d port:%d\n",
+			tcp_server_local->proto.tcp->remote_ip[0],
+			tcp_server_local->proto.tcp->remote_ip[1],
+			tcp_server_local->proto.tcp->remote_ip[2],
+			tcp_server_local->proto.tcp->remote_ip[3],
+			tcp_server_local->proto.tcp->remote_port\
+);
 }
 
 
